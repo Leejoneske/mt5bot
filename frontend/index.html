@@ -1,1 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Bot Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #status p {
+            margin: 5px 0;
+        }
+        #bot-status {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        #profit {
+            color: green;
+        }
+        #loss {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trading Bot Dashboard</h1>
+    <button id="start-btn">Start Bot</button>
+    <button id="stop-btn">Stop Bot</button>
+    <div id="status">
+        <p>Status: <span id="bot-status">Stopped</span></p>
+        <p>Profit: <span id="profit">0</span></p>
+        <p>Loss: <span id="loss">0</span></p>
+    </div>
 
+    <script>
+        // Start Bot
+        document.getElementById("start-btn").addEventListener("click", () => {
+            fetch("/start", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("bot-status").textContent = "Running";
+                });
+        });
+
+        // Stop Bot
+        document.getElementById("stop-btn").addEventListener("click", () => {
+            fetch("/stop", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("bot-status").textContent = "Stopped";
+                });
+        });
+
+        // Update Status Every 5 Seconds
+        setInterval(() => {
+            fetch("/status")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("bot-status").textContent = data.status;
+                    document.getElementById("profit").textContent = data.profit;
+                    document.getElementById("loss").textContent = data.loss;
+                });
+        }, 5000);  // Update every 5 seconds
+    </script>
+</body>
+</html>
